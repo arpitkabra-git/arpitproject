@@ -68,7 +68,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"current_filename": {
-											"value": "@item().itemName",
+											"value": "@activity('get_metadata_file_name').output",
 											"type": "Expression"
 										}
 									}
