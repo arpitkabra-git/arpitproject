@@ -1,0 +1,31 @@
+{
+	"name": "ds_all_emp_files",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lnk_storage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "import"
+			},
+			"columnDelimiter": ";",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "id",
+				"type": "String"
+			},
+			{
+				"name": "name",
+				"type": "String"
+			}
+		]
+	}
+}

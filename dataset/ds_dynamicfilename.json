@@ -1,0 +1,40 @@
+{
+	"name": "ds_dynamicfilename",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lnk_storage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"current_filename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().current_filename",
+					"type": "Expression"
+				},
+				"container": "import"
+			},
+			"columnDelimiter": ";",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "id",
+				"type": "String"
+			},
+			{
+				"name": "name",
+				"type": "String"
+			}
+		]
+	}
+}
