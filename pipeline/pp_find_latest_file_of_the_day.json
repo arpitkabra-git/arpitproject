@@ -87,6 +87,26 @@
 							}
 						},
 						{
+							"name": "Set variable_last_mofieddate",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "If Condition1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "var_oldModifydate",
+								"value": {
+									"value": "@activity('Get Metadata_lastModifiedDate').output.lastModified",
+									"type": "Expression"
+								}
+							}
+						},
+						{
 							"name": "If Condition1",
 							"type": "IfCondition",
 							"dependsOn": [
@@ -97,12 +117,42 @@
 									]
 								}
 							],
-							"userProperties": []
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@greater(activity('Get Metadata_lastModifiedDate').output.lastModified,variables('var_oldModifydate'))",
+									"type": "Expression"
+								},
+								"ifTrueActivities": [
+									{
+										"name": "Set variable_filename",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "var_filename",
+											"value": {
+												"value": "@activity('Get Metadata_lastModifiedDate').output.itemName",
+												"type": "Expression"
+											}
+										}
+									}
+								]
+							}
 						}
 					]
 				}
 			}
 		],
+		"variables": {
+			"var_filename": {
+				"type": "String"
+			},
+			"var_oldModifydate": {
+				"type": "String",
+				"defaultValue": "2020-03-29T02:49:59Z"
+			}
+		},
 		"annotations": []
 	}
 }
