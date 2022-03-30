@@ -60,8 +60,14 @@
 							"userProperties": [],
 							"typeProperties": {
 								"dataset": {
-									"referenceName": "ds_all_emp_files",
-									"type": "DatasetReference"
+									"referenceName": "ds_dynamicfilename",
+									"type": "DatasetReference",
+									"parameters": {
+										"current_filename": {
+											"value": "@item()",
+											"type": "Expression"
+										}
+									}
 								},
 								"fieldList": [],
 								"storeSettings": {
