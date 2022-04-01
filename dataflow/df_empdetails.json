@@ -10,20 +10,52 @@
 						"type": "DatasetReference"
 					},
 					"name": "srcEmpFile"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlEmpDetails",
+						"type": "DatasetReference"
+					},
+					"name": "srcEmpDetailsSQLTable"
 				}
 			],
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "ds_sqlserver_empdelimited",
+						"referenceName": "AzureSqlEmpDetails",
 						"type": "DatasetReference"
 					},
 					"name": "sinkDBEmpdetailstable"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlEmpDetails",
+						"type": "DatasetReference"
+					},
+					"name": "sinkfinalwritetotable"
 				}
 			],
 			"transformations": [
 				{
 					"name": "addingIsActive"
+				},
+				{
+					"name": "lookupempid"
+				},
+				{
+					"name": "selectTransformation"
+				},
+				{
+					"name": "filtertoremovenotmatched"
+				},
+				{
+					"name": "selectpostmatch"
+				},
+				{
+					"name": "derivedColumntoupdateisactive"
+				},
+				{
+					"name": "alterRow1"
 				}
 			],
 			"scriptLines": [
@@ -36,12 +68,54 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> srcEmpFile",
+				"source(output(",
+				"          surr_key as integer,",
+				"          emp_id as string,",
+				"          emp_name as string,",
+				"          emp_gender as string,",
+				"          emp_country as string,",
+				"          isActive as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> srcEmpDetailsSQLTable",
 				"srcEmpFile derive(isActive = 1) ~> addingIsActive",
+				"srcEmpFile, selectTransformation lookup(empid == SQL_emp_id,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> lookupempid",
+				"srcEmpDetailsSQLTable select(mapColumn(",
+				"          SQL_surr_key = surr_key,",
+				"          SQL_emp_id = emp_id,",
+				"          SQL_emp_name = emp_name,",
+				"          SQL_emp_gender = emp_gender,",
+				"          SQL_emp_country = emp_country,",
+				"          SQL_isActive = isActive",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectTransformation",
+				"lookupempid filter(!isNull(SQL_emp_id) ) ~> filtertoremovenotmatched",
+				"filtertoremovenotmatched select(mapColumn(",
+				"          SQL_surr_key,",
+				"          SQL_emp_id,",
+				"          SQL_emp_name,",
+				"          SQL_emp_gender,",
+				"          SQL_emp_country,",
+				"          SQL_isActive",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectpostmatch",
+				"selectpostmatch derive(SQL_isActive = 0) ~> derivedColumntoupdateisactive",
+				"derivedColumntoupdateisactive alterRow(updateIf(1==1)) ~> alterRow1",
 				"addingIsActive sink(allowSchemaDrift: true,",
 				"     validateSchema: true,",
 				"     input(",
-				"          id as string,",
-				"          name as string",
+				"          surr_key as integer,",
+				"          emp_id as string,",
+				"          emp_name as string,",
+				"          emp_gender as string,",
+				"          emp_country as string,",
+				"          isActive as integer",
 				"     ),",
 				"     deletable:false,",
 				"     insertable:true,",
@@ -50,13 +124,43 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 2,",
 				"     errorHandlingOption: 'stopOnFirstError',",
 				"     mapColumn(",
-				"          empid,",
-				"          empname,",
-				"          gender,",
-				"          country",
-				"     )) ~> sinkDBEmpdetailstable"
+				"          emp_id = empid,",
+				"          emp_name = empname,",
+				"          emp_gender = gender,",
+				"          emp_country = country,",
+				"          isActive",
+				"     )) ~> sinkDBEmpdetailstable",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          surr_key as integer,",
+				"          emp_id as string,",
+				"          emp_name as string,",
+				"          emp_gender as string,",
+				"          emp_country as string,",
+				"          isActive as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:true,",
+				"     upsertable:false,",
+				"     keys:['surr_key'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          surr_key = SQL_surr_key,",
+				"          emp_id = SQL_emp_id,",
+				"          emp_name = SQL_emp_id,",
+				"          emp_gender = SQL_emp_gender,",
+				"          emp_country = SQL_emp_country,",
+				"          isActive = SQL_isActive",
+				"     )) ~> sinkfinalwritetotable"
 			]
 		}
 	}
