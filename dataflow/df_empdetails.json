@@ -1,0 +1,63 @@
+{
+	"name": "df_empdetails",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_emp_details",
+						"type": "DatasetReference"
+					},
+					"name": "srcEmpFile"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sqlserver_empdelimited",
+						"type": "DatasetReference"
+					},
+					"name": "sinkDBEmpdetailstable"
+				}
+			],
+			"transformations": [
+				{
+					"name": "addingIsActive"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          empid as string,",
+				"          empname as string,",
+				"          gender as string,",
+				"          country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> srcEmpFile",
+				"srcEmpFile derive(isActive = 1) ~> addingIsActive",
+				"addingIsActive sink(allowSchemaDrift: true,",
+				"     validateSchema: true,",
+				"     input(",
+				"          id as string,",
+				"          name as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          empid,",
+				"          empname,",
+				"          gender,",
+				"          country",
+				"     )) ~> sinkDBEmpdetailstable"
+			]
+		}
+	}
+}
