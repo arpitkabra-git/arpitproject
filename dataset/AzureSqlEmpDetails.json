@@ -1,0 +1,43 @@
+{
+	"name": "AzureSqlEmpDetails",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lnk_sqlserver",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "surr_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "emp_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "emp_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "emp_gender",
+				"type": "nvarchar"
+			},
+			{
+				"name": "emp_country",
+				"type": "nvarchar"
+			},
+			{
+				"name": "isActive",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "emp_details"
+		}
+	}
+}
