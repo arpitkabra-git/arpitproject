@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "df_empdetails",
+				"name": "df_empdetails_scd2",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_empdetails",
+						"referenceName": "df_empdetails_scd2",
 						"type": "DataFlowReference"
 					},
 					"compute": {

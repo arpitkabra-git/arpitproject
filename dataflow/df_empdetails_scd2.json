@@ -1,5 +1,5 @@
 {
-	"name": "df_empdetails",
+	"name": "df_empdetails_scd2",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
