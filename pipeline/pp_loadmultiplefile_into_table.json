@@ -72,7 +72,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "ds_empdelimited_folder",
+						"referenceName": "ds_all_emp_files",
 						"type": "DatasetReference"
 					}
 				],
