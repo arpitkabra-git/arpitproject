@@ -46,7 +46,7 @@
 						"mappings": [
 							{
 								"source": {
-									"name": "empid",
+									"name": "id",
 									"type": "String",
 									"physicalType": "String"
 								},
@@ -58,7 +58,7 @@
 							},
 							{
 								"source": {
-									"name": "empname",
+									"name": "name",
 									"type": "String",
 									"physicalType": "String"
 								},
